@@ -1,5 +1,5 @@
 #!/bin/bash
-# v1.0
+# v1.1
 # Ce script effectue des sauvegardes complètes et incrémentales de toutes les bases de données MySQL
 # Il conserve les sauvegardes pendant X jours (BACKUP_EXPIRATION_DAYS)
 # Ensuite, il purge automatiquement les sauvegardes expirées
@@ -45,6 +45,12 @@ if [ -z "$SUDO_USER" ]; then
     echo "Vous devez exécuter ce script en root ou avec sudo"
     exit 13
 fi 
+
+# Vérifie si mysqladmin est installé, sinon l'installe
+if ! command -v mysqladmin &> /dev/null; then
+    echo "mysqladmin n'est pas installé. Installation en cours..."
+    apt-get update && apt-get install -y mysql-client
+fi
 
 ### Check MySQL
 PING=$(mysqladmin --defaults-file=$(pwd)/.secret.cnf ping 2>&1)
